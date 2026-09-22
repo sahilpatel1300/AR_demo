@@ -58,7 +58,7 @@ export const createScene = async function () {
     // --- Walk in a circle, facing forward ---
     let angle = 0;
     const radius = 3;
-    cat.scaling.y = .1;
+    cat.scaling.y = .5;
     scene.onBeforeRenderObservable.add(() => {
         angle += 0.02;
         cat.position.x = Math.cos(angle) * radius;
