@@ -1,64 +1,79 @@
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8"/>
-  <title>Babylon.js Playground</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+export const createScene = async function () {
+    var scene = new BABYLON.Scene(engine);
 
-  <!-- Babylon globals (kept so window.BABYLON is available if your app expects it) -->
-  <script src="https://assets.babylonjs.com/generated/Assets.js"></script>
-  <script src="https://cdn.babylonjs.com/recast.js"></script>
-  <script src="https://cdn.babylonjs.com/ammo.js"></script>
-  <script src="https://cdn.babylonjs.com/havok/HavokPhysics_umd.js"></script>
-  <script src="https://cdn.babylonjs.com/cannon.js"></script>
-  <script src="https://cdn.babylonjs.com/Oimo.js"></script>
-  <script src="https://cdn.babylonjs.com/earcut.min.js"></script>
-  <script src="https://cdn.babylonjs.com/babylon.js"></script>
-  <script src="https://cdn.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
-  <script src="https://cdn.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
-  <script src="https://cdn.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
-  <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.js"></script>
-  <script src="https://cdn.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
-  <script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
-  <script src="https://cdn.babylonjs.com/addons/babylonjs.addons.min.js"></script>
-  <script src="https://cdn.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+    camera.setTarget(BABYLON.Vector3.Zero());
+    camera.attachControl(canvas, true);
 
-  <style>
-    html,body,#renderCanvas{width:100%;height:100%;margin:0;padding:0;overflow:hidden;background:#000}
-  </style>
-</head>
-<body>
-  <canvas id="renderCanvas"></canvas>
-  <script type="module">
-    // Turn bundle text into a module URL
-    const code = "// snapshot:index.js\nvar createScene = async function() {\n  var scene = new BABYLON.Scene(engine);\n  var camera = new BABYLON.FreeCamera(\"camera1\", new BABYLON.Vector3(0, 5, -10), scene);\n  camera.setTarget(BABYLON.Vector3.Zero());\n  camera.attachControl(canvas, true);\n  var light = new BABYLON.HemisphericLight(\"light\", new BABYLON.Vector3(0, 1, 0), scene);\n  light.intensity = 0.7;\n  const fur = new BABYLON.StandardMaterial(\"fur\", scene);\n  fur.diffuseColor = new BABYLON.Color3(1, 0.55, 0.1);\n  const black = new BABYLON.StandardMaterial(\"black\", scene);\n  black.diffuseColor = new BABYLON.Color3(0, 0, 0);\n  const pink = new BABYLON.StandardMaterial(\"pink\", scene);\n  pink.diffuseColor = new BABYLON.Color3(1, 0.5, 0.6);\n  const cat = new BABYLON.TransformNode(\"cat\", scene);\n  const part = (mesh, mat, x, y, z) => {\n    mesh.position.set(x, y, z);\n    mesh.material = mat;\n    mesh.parent = cat;\n    return mesh;\n  };\n  const body = part(BABYLON.MeshBuilder.CreateSphere(\"body\", { diameter: 1 }, scene), fur, 0, 0.9, 0);\n  body.scaling.set(1, 0.9, 1.8);\n  part(BABYLON.MeshBuilder.CreateSphere(\"head\", { diameter: 0.9 }, scene), fur, 0, 1.4, 1);\n  const ear = { diameterTop: 0, diameterBottom: 0.35, height: 0.4, tessellation: 4 };\n  part(BABYLON.MeshBuilder.CreateCylinder(\"earL\", ear, scene), fur, -0.25, 1.9, 1);\n  part(BABYLON.MeshBuilder.CreateCylinder(\"earR\", ear, scene), fur, 0.25, 1.9, 1);\n  part(BABYLON.MeshBuilder.CreateSphere(\"eyeL\", { diameter: 0.12 }, scene), black, -0.18, 1.5, 1.4);\n  part(BABYLON.MeshBuilder.CreateSphere(\"eyeR\", { diameter: 0.12 }, scene), black, 0.18, 1.5, 1.4);\n  part(BABYLON.MeshBuilder.CreateSphere(\"nose\", { diameter: 0.1 }, scene), pink, 0, 1.35, 1.45);\n  const leg = { diameter: 0.25, height: 0.6 };\n  part(BABYLON.MeshBuilder.CreateCylinder(\"legFL\", leg, scene), fur, -0.3, 0.3, 0.6);\n  part(BABYLON.MeshBuilder.CreateCylinder(\"legFR\", leg, scene), fur, 0.3, 0.3, 0.6);\n  part(BABYLON.MeshBuilder.CreateCylinder(\"legBL\", leg, scene), fur, -0.3, 0.3, -0.6);\n  part(BABYLON.MeshBuilder.CreateCylinder(\"legBR\", leg, scene), fur, 0.3, 0.3, -0.6);\n  const tail = part(BABYLON.MeshBuilder.CreateCylinder(\"tail\", { diameter: 0.15, height: 1.2 }, scene), fur, 0, 1.5, -1.25);\n  tail.rotation.x = -0.6;\n  let angle = 0;\n  const radius = 3;\n  scene.onBeforeRenderObservable.add(() => {\n    angle += 0.02;\n    cat.position.x = Math.cos(angle) * radius;\n    cat.position.z = Math.sin(angle) * radius;\n    cat.rotation.y = -angle;\n    tail.rotation.z = Math.sin(angle * 10) * 0.3;\n  });\n  var ground = BABYLON.MeshBuilder.CreateGround(\"ground\", { width: 8, height: 8 }, scene);\n  await scene.createDefaultXRExperienceAsync({\n    uiOptions: {\n      sessionMode: \"immersive-ar\",\n      referenceSpaceType: \"local-floor\"\n    },\n    disableTeleportation: true\n  });\n  return scene;\n};\nexport {\n  createScene\n};\n//# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsic25hcHNob3Q6aW5kZXguanMiXSwKICAic291cmNlc0NvbnRlbnQiOiBbImV4cG9ydCBjb25zdCBjcmVhdGVTY2VuZSA9IGFzeW5jIGZ1bmN0aW9uICgpIHtcbiAgICB2YXIgc2NlbmUgPSBuZXcgQkFCWUxPTi5TY2VuZShlbmdpbmUpO1xuXG4gICAgdmFyIGNhbWVyYSA9IG5ldyBCQUJZTE9OLkZyZWVDYW1lcmEoXCJjYW1lcmExXCIsIG5ldyBCQUJZTE9OLlZlY3RvcjMoMCwgNSwgLTEwKSwgc2NlbmUpO1xuICAgIGNhbWVyYS5zZXRUYXJnZXQoQkFCWUxPTi5WZWN0b3IzLlplcm8oKSk7XG4gICAgY2FtZXJhLmF0dGFjaENvbnRyb2woY2FudmFzLCB0cnVlKTtcblxuICAgIHZhciBsaWdodCA9IG5ldyBCQUJZTE9OLkhlbWlzcGhlcmljTGlnaHQoXCJsaWdodFwiLCBuZXcgQkFCWUxPTi5WZWN0b3IzKDAsIDEsIDApLCBzY2VuZSk7XG4gICAgbGlnaHQuaW50ZW5zaXR5ID0gMC43O1xuXG4gICAgLy8gLS0tIE1hdGVyaWFscyAtLS1cbiAgICBjb25zdCBmdXIgPSBuZXcgQkFCWUxPTi5TdGFuZGFyZE1hdGVyaWFsKFwiZnVyXCIsIHNjZW5lKTtcbiAgICBmdXIuZGlmZnVzZUNvbG9yID0gbmV3IEJBQllMT04uQ29sb3IzKDEsIDAuNTUsIDAuMSk7ICAgLy8gb3JhbmdlIGNhdFxuICAgIGNvbnN0IGJsYWNrID0gbmV3IEJBQllMT04uU3RhbmRhcmRNYXRlcmlhbChcImJsYWNrXCIsIHNjZW5lKTtcbiAgICBibGFjay5kaWZmdXNlQ29sb3IgPSBuZXcgQkFCWUxPTi5Db2xvcjMoMCwgMCwgMCk7XG4gICAgY29uc3QgcGluayA9IG5ldyBCQUJZTE9OLlN0YW5kYXJkTWF0ZXJpYWwoXCJwaW5rXCIsIHNjZW5lKTtcbiAgICBwaW5rLmRpZmZ1c2VDb2xvciA9IG5ldyBCQUJZTE9OLkNvbG9yMygxLCAwLjUsIDAuNik7XG5cbiAgICAvLyAtLS0gUGFyZW50IG5vZGU6IG1vdmUvcm90YXRlIHRoaXMgYW5kIHRoZSB3aG9sZSBjYXQgZm9sbG93cyAtLS1cbiAgICBjb25zdCBjYXQgPSBuZXcgQkFCWUxPTi5UcmFuc2Zvcm1Ob2RlKFwiY2F0XCIsIHNjZW5lKTtcblxuICAgIC8vIEhlbHBlcjogbWFrZSBhIHBhcnQsIGdpdmUgaXQgYSBtYXRlcmlhbCwgYXR0YWNoIGl0IHRvIHRoZSBjYXRcbiAgICBjb25zdCBwYXJ0ID0gKG1lc2gsIG1hdCwgeCwgeSwgeikgPT4ge1xuICAgICAgICBtZXNoLnBvc2l0aW9uLnNldCh4LCB5LCB6KTtcbiAgICAgICAgbWVzaC5tYXRlcmlhbCA9IG1hdDtcbiAgICAgICAgbWVzaC5wYXJlbnQgPSBjYXQ7XG4gICAgICAgIHJldHVybiBtZXNoO1xuICAgIH07XG5cbiAgICAvLyBCb2R5IChzdHJldGNoZWQgc3BoZXJlKVxuICAgIGNvbnN0IGJvZHkgPSBwYXJ0KEJBQllMT04uTWVzaEJ1aWxkZXIuQ3JlYXRlU3BoZXJlKFwiYm9keVwiLCB7IGRpYW1ldGVyOiAxIH0sIHNjZW5lKSwgZnVyLCAwLCAwLjksIDApO1xuICAgIGJvZHkuc2NhbGluZy5zZXQoMSwgMC45LCAxLjgpO1xuXG4gICAgLy8gSGVhZFxuICAgIHBhcnQoQkFCWUxPTi5NZXNoQnVpbGRlci5DcmVhdGVTcGhlcmUoXCJoZWFkXCIsIHsgZGlhbWV0ZXI6IDAuOSB9LCBzY2VuZSksIGZ1ciwgMCwgMS40LCAxLjApO1xuXG4gICAgLy8gRWFycyAoY29uZXMgPSBjeWxpbmRlcnMgd2l0aCBhIHBvaW50ZWQgdG9wKVxuICAgIGNvbnN0IGVhciA9IHsgZGlhbWV0ZXJUb3A6IDAsIGRpYW1ldGVyQm90dG9tOiAwLjM1LCBoZWlnaHQ6IDAuNCwgdGVzc2VsbGF0aW9uOiA0IH07XG4gICAgcGFydChCQUJZTE9OLk1lc2hCdWlsZGVyLkNyZWF0ZUN5bGluZGVyKFwiZWFyTFwiLCBlYXIsIHNjZW5lKSwgZnVyLCAtMC4yNSwgMS45LCAxLjApO1xuICAgIHBhcnQoQkFCWUxPTi5NZXNoQnVpbGRlci5DcmVhdGVDeWxpbmRlcihcImVhclJcIiwgZWFyLCBzY2VuZSksIGZ1ciwgIDAuMjUsIDEuOSwgMS4wKTtcblxuICAgIC8vIEV5ZXMgYW5kIG5vc2VcbiAgICBwYXJ0KEJBQllMT04uTWVzaEJ1aWxkZXIuQ3JlYXRlU3BoZXJlKFwiZXllTFwiLCB7IGRpYW1ldGVyOiAwLjEyIH0sIHNjZW5lKSwgYmxhY2ssIC0wLjE4LCAxLjUsIDEuNCk7XG4gICAgcGFydChCQUJZTE9OLk1lc2hCdWlsZGVyLkNyZWF0ZVNwaGVyZShcImV5ZVJcIiwgeyBkaWFtZXRlcjogMC4xMiB9LCBzY2VuZSksIGJsYWNrLCAgMC4xOCwgMS41LCAxLjQpO1xuICAgIHBhcnQoQkFCWUxPTi5NZXNoQnVpbGRlci5DcmVhdGVTcGhlcmUoXCJub3NlXCIsIHsgZGlhbWV0ZXI6IDAuMSB9LCBzY2VuZSksIHBpbmssIDAsIDEuMzUsIDEuNDUpO1xuXG4gICAgLy8gTGVnc1xuICAgIGNvbnN0IGxlZyA9IHsgZGlhbWV0ZXI6IDAuMjUsIGhlaWdodDogMC42IH07XG4gICAgcGFydChCQUJZTE9OLk1lc2hCdWlsZGVyLkNyZWF0ZUN5bGluZGVyKFwibGVnRkxcIiwgbGVnLCBzY2VuZSksIGZ1ciwgLTAuMywgMC4zLCAgMC42KTtcbiAgICBwYXJ0KEJBQllMT04uTWVzaEJ1aWxkZXIuQ3JlYXRlQ3lsaW5kZXIoXCJsZWdGUlwiLCBsZWcsIHNjZW5lKSwgZnVyLCAgMC4zLCAwLjMsICAwLjYpO1xuICAgIHBhcnQoQkFCWUxPTi5NZXNoQnVpbGRlci5DcmVhdGVDeWxpbmRlcihcImxlZ0JMXCIsIGxlZywgc2NlbmUpLCBmdXIsIC0wLjMsIDAuMywgLTAuNik7XG4gICAgcGFydChCQUJZTE9OLk1lc2hCdWlsZGVyLkNyZWF0ZUN5bGluZGVyKFwibGVnQlJcIiwgbGVnLCBzY2VuZSksIGZ1ciwgIDAuMywgMC4zLCAtMC42KTtcblxuICAgIC8vIFRhaWwsIHRpbHRlZCB1cCBhbmQgYmFja1xuICAgIGNvbnN0IHRhaWwgPSBwYXJ0KEJBQllMT04uTWVzaEJ1aWxkZXIuQ3JlYXRlQ3lsaW5kZXIoXCJ0YWlsXCIsIHsgZGlhbWV0ZXI6IDAuMTUsIGhlaWdodDogMS4yIH0sIHNjZW5lKSwgZnVyLCAwLCAxLjUsIC0xLjI1KTtcbiAgICB0YWlsLnJvdGF0aW9uLnggPSAtMC42O1xuXG4gICAgLy8gLS0tIFdhbGsgaW4gYSBjaXJjbGUsIGZhY2luZyBmb3J3YXJkIC0tLVxuICAgIGxldCBhbmdsZSA9IDA7XG4gICAgY29uc3QgcmFkaXVzID0gMztcbiAgICBzY2VuZS5vbkJlZm9yZVJlbmRlck9ic2VydmFibGUuYWRkKCgpID0+IHtcbiAgICAgICAgYW5nbGUgKz0gMC4wMjtcbiAgICAgICAgY2F0LnBvc2l0aW9uLnggPSBNYXRoLmNvcyhhbmdsZSkgKiByYWRpdXM7XG4gICAgICAgIGNhdC5wb3NpdGlvbi56ID0gTWF0aC5zaW4oYW5nbGUpICogcmFkaXVzO1xuICAgICAgICBjYXQucm90YXRpb24ueSA9IC1hbmdsZTsgICAgICAgICAgICAgIC8vIGZhY2UgdGhlIGRpcmVjdGlvbiBvZiB0cmF2ZWxcbiAgICAgICAgdGFpbC5yb3RhdGlvbi56ID0gTWF0aC5zaW4oYW5nbGUgKiAxMCkgKiAwLjM7ICAgLy8gdGFpbCBzd2lzaFxuICAgIH0pO1xuXG4gICAgdmFyIGdyb3VuZCA9IEJBQllMT04uTWVzaEJ1aWxkZXIuQ3JlYXRlR3JvdW5kKFwiZ3JvdW5kXCIsIHsgd2lkdGg6IDgsIGhlaWdodDogOCB9LCBzY2VuZSk7XG4gICAgYXdhaXQgc2NlbmUuY3JlYXRlRGVmYXVsdFhSRXhwZXJpZW5jZUFzeW5jKHtcbiAgICAgICAgdWlPcHRpb25zOiB7XG4gICAgICAgICAgICBzZXNzaW9uTW9kZTogXCJpbW1lcnNpdmUtYXJcIixcbiAgICAgICAgICAgIHJlZmVyZW5jZVNwYWNlVHlwZTogXCJsb2NhbC1mbG9vclwiXG4gICAgICAgIH0sXG4gICAgICAgIGRpc2FibGVUZWxlcG9ydGF0aW9uOiB0cnVlXG4gICAgfSk7XG4gICAgcmV0dXJuIHNjZW5lO1xufTtcbi8vIyBzb3VyY2VVUkw9ZmlsZTovLy9wZy9pbmRleC5qcyJdLAogICJtYXBwaW5ncyI6ICI7QUFBTyxJQUFNLGNBQWMsaUJBQWtCO0FBQ3pDLE1BQUksUUFBUSxJQUFJLFFBQVEsTUFBTSxNQUFNO0FBRXBDLE1BQUksU0FBUyxJQUFJLFFBQVEsV0FBVyxXQUFXLElBQUksUUFBUSxRQUFRLEdBQUcsR0FBRyxHQUFHLEdBQUcsS0FBSztBQUNwRixTQUFPLFVBQVUsUUFBUSxRQUFRLEtBQUssQ0FBQztBQUN2QyxTQUFPLGNBQWMsUUFBUSxJQUFJO0FBRWpDLE1BQUksUUFBUSxJQUFJLFFBQVEsaUJBQWlCLFNBQVMsSUFBSSxRQUFRLFFBQVEsR0FBRyxHQUFHLENBQUMsR0FBRyxLQUFLO0FBQ3JGLFFBQU0sWUFBWTtBQUdsQixRQUFNLE1BQU0sSUFBSSxRQUFRLGlCQUFpQixPQUFPLEtBQUs7QUFDckQsTUFBSSxlQUFlLElBQUksUUFBUSxPQUFPLEdBQUcsTUFBTSxHQUFHO0FBQ2xELFFBQU0sUUFBUSxJQUFJLFFBQVEsaUJBQWlCLFNBQVMsS0FBSztBQUN6RCxRQUFNLGVBQWUsSUFBSSxRQUFRLE9BQU8sR0FBRyxHQUFHLENBQUM7QUFDL0MsUUFBTSxPQUFPLElBQUksUUFBUSxpQkFBaUIsUUFBUSxLQUFLO0FBQ3ZELE9BQUssZUFBZSxJQUFJLFFBQVEsT0FBTyxHQUFHLEtBQUssR0FBRztBQUdsRCxRQUFNLE1BQU0sSUFBSSxRQUFRLGNBQWMsT0FBTyxLQUFLO0FBR2xELFFBQU0sT0FBTyxDQUFDLE1BQU0sS0FBSyxHQUFHLEdBQUcsTUFBTTtBQUNqQyxTQUFLLFNBQVMsSUFBSSxHQUFHLEdBQUcsQ0FBQztBQUN6QixTQUFLLFdBQVc7QUFDaEIsU0FBSyxTQUFTO0FBQ2QsV0FBTztBQUFBLEVBQ1g7QUFHQSxRQUFNLE9BQU8sS0FBSyxRQUFRLFlBQVksYUFBYSxRQUFRLEVBQUUsVUFBVSxFQUFFLEdBQUcsS0FBSyxHQUFHLEtBQUssR0FBRyxLQUFLLENBQUM7QUFDbEcsT0FBSyxRQUFRLElBQUksR0FBRyxLQUFLLEdBQUc7QUFHNUIsT0FBSyxRQUFRLFlBQVksYUFBYSxRQUFRLEVBQUUsVUFBVSxJQUFJLEdBQUcsS0FBSyxHQUFHLEtBQUssR0FBRyxLQUFLLENBQUc7QUFHekYsUUFBTSxNQUFNLEVBQUUsYUFBYSxHQUFHLGdCQUFnQixNQUFNLFFBQVEsS0FBSyxjQUFjLEVBQUU7QUFDakYsT0FBSyxRQUFRLFlBQVksZUFBZSxRQUFRLEtBQUssS0FBSyxHQUFHLEtBQUssT0FBTyxLQUFLLENBQUc7QUFDakYsT0FBSyxRQUFRLFlBQVksZUFBZSxRQUFRLEtBQUssS0FBSyxHQUFHLEtBQU0sTUFBTSxLQUFLLENBQUc7QUFHakYsT0FBSyxRQUFRLFlBQVksYUFBYSxRQUFRLEVBQUUsVUFBVSxLQUFLLEdBQUcsS0FBSyxHQUFHLE9BQU8sT0FBTyxLQUFLLEdBQUc7QUFDaEcsT0FBSyxRQUFRLFlBQVksYUFBYSxRQUFRLEVBQUUsVUFBVSxLQUFLLEdBQUcsS0FBSyxHQUFHLE9BQVEsTUFBTSxLQUFLLEdBQUc7QUFDaEcsT0FBSyxRQUFRLFlBQVksYUFBYSxRQUFRLEVBQUUsVUFBVSxJQUFJLEdBQUcsS0FBSyxHQUFHLE1BQU0sR0FBRyxNQUFNLElBQUk7QUFHNUYsUUFBTSxNQUFNLEVBQUUsVUFBVSxNQUFNLFFBQVEsSUFBSTtBQUMxQyxPQUFLLFFBQVEsWUFBWSxlQUFlLFNBQVMsS0FBSyxLQUFLLEdBQUcsS0FBSyxNQUFNLEtBQU0sR0FBRztBQUNsRixPQUFLLFFBQVEsWUFBWSxlQUFlLFNBQVMsS0FBSyxLQUFLLEdBQUcsS0FBTSxLQUFLLEtBQU0sR0FBRztBQUNsRixPQUFLLFFBQVEsWUFBWSxlQUFlLFNBQVMsS0FBSyxLQUFLLEdBQUcsS0FBSyxNQUFNLEtBQUssSUFBSTtBQUNsRixPQUFLLFFBQVEsWUFBWSxlQUFlLFNBQVMsS0FBSyxLQUFLLEdBQUcsS0FBTSxLQUFLLEtBQUssSUFBSTtBQUdsRixRQUFNLE9BQU8sS0FBSyxRQUFRLFlBQVksZUFBZSxRQUFRLEVBQUUsVUFBVSxNQUFNLFFBQVEsSUFBSSxHQUFHLEtBQUssR0FBRyxLQUFLLEdBQUcsS0FBSyxLQUFLO0FBQ3hILE9BQUssU0FBUyxJQUFJO0FBR2xCLE1BQUksUUFBUTtBQUNaLFFBQU0sU0FBUztBQUNmLFFBQU0seUJBQXlCLElBQUksTUFBTTtBQUNyQyxhQUFTO0FBQ1QsUUFBSSxTQUFTLElBQUksS0FBSyxJQUFJLEtBQUssSUFBSTtBQUNuQyxRQUFJLFNBQVMsSUFBSSxLQUFLLElBQUksS0FBSyxJQUFJO0FBQ25DLFFBQUksU0FBUyxJQUFJLENBQUM7QUFDbEIsU0FBSyxTQUFTLElBQUksS0FBSyxJQUFJLFFBQVEsRUFBRSxJQUFJO0FBQUEsRUFDN0MsQ0FBQztBQUVELE1BQUksU0FBUyxRQUFRLFlBQVksYUFBYSxVQUFVLEVBQUUsT0FBTyxHQUFHLFFBQVEsRUFBRSxHQUFHLEtBQUs7QUFDdEYsUUFBTSxNQUFNLCtCQUErQjtBQUFBLElBQ3ZDLFdBQVc7QUFBQSxNQUNQLGFBQWE7QUFBQSxNQUNiLG9CQUFvQjtBQUFBLElBQ3hCO0FBQUEsSUFDQSxzQkFBc0I7QUFBQSxFQUMxQixDQUFDO0FBQ0QsU0FBTztBQUNYOyIsCiAgIm5hbWVzIjogW10KfQo=\n";
-    const blob = new Blob([code], { type: 'text/javascript' });
-    const url = URL.createObjectURL(blob);
+    var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+    light.intensity = 0.7;
 
-    const BABYLON = window.BABYLON;
-    const canvas = document.getElementById('renderCanvas');
+    // --- Materials ---
+    const fur = new BABYLON.StandardMaterial("fur", scene);
+    fur.diffuseColor = new BABYLON.Color3(1, 0.55, 0.1);   // orange cat
+    const black = new BABYLON.StandardMaterial("black", scene);
+    black.diffuseColor = new BABYLON.Color3(0, 0, 0);
+    const pink = new BABYLON.StandardMaterial("pink", scene);
+    pink.diffuseColor = new BABYLON.Color3(1, 0.5, 0.6);
 
-    // Import your bundled app (which exports createScene / default)
-    const mod = await import(url);
+    // --- Parent node: move/rotate this and the whole cat follows ---
+    const cat = new BABYLON.TransformNode("cat", scene);
 
-    let engine = null;
-    if (typeof mod.createEngine === 'function') {
-      try { engine = await mod.createEngine(); } catch {}
-    }
-    if (!engine) {
-      engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true });
-    }
-    window.engine = engine; window.canvas = canvas;
+    // Helper: make a part, give it a material, attach it to the cat
+    const part = (mesh, mat, x, y, z) => {
+        mesh.position.set(x, y, z);
+        mesh.material = mat;
+        mesh.parent = cat;
+        return mesh;
+    };
 
-    let createScene = mod.createScene || mod.default;
-    if (!createScene && mod.Playground?.CreateScene) createScene = (e,c)=>mod.Playground.CreateScene(e,c);
-    if (!createScene) throw new Error('No createScene() export found.');
+    // Body (stretched sphere)
+    const body = part(BABYLON.MeshBuilder.CreateSphere("body", { diameter: 1 }, scene), fur, 0, 0.9, 0);
+    body.scaling.set(1, 0.9, 1.8);
 
-    const scene = await (createScene(engine, canvas) ?? createScene());
-    engine.runRenderLoop(()=>scene.render());
-    addEventListener('resize', ()=>engine.resize());
+    // Head
+    part(BABYLON.MeshBuilder.CreateSphere("head", { diameter: 0.9 }, scene), fur, 0, 1.4, 1.0);
 
-    addEventListener('unload', ()=> URL.revokeObjectURL(url));
-  </script>
-</body>
-</html>
+    // Ears (cones = cylinders with a pointed top)
+    const ear = { diameterTop: 0, diameterBottom: 0.35, height: 0.4, tessellation: 4 };
+    part(BABYLON.MeshBuilder.CreateCylinder("earL", ear, scene), fur, -0.25, 1.9, 1.0);
+    part(BABYLON.MeshBuilder.CreateCylinder("earR", ear, scene), fur,  0.25, 1.9, 1.0);
+
+    // Eyes and nose
+    part(BABYLON.MeshBuilder.CreateSphere("eyeL", { diameter: 0.12 }, scene), black, -0.18, 1.5, 1.4);
+    part(BABYLON.MeshBuilder.CreateSphere("eyeR", { diameter: 0.12 }, scene), black,  0.18, 1.5, 1.4);
+    part(BABYLON.MeshBuilder.CreateSphere("nose", { diameter: 0.1 }, scene), pink, 0, 1.35, 1.45);
+
+    // Legs
+    const leg = { diameter: 0.25, height: 0.6 };
+    part(BABYLON.MeshBuilder.CreateCylinder("legFL", leg, scene), fur, -0.3, 0.3,  0.6);
+    part(BABYLON.MeshBuilder.CreateCylinder("legFR", leg, scene), fur,  0.3, 0.3,  0.6);
+    part(BABYLON.MeshBuilder.CreateCylinder("legBL", leg, scene), fur, -0.3, 0.3, -0.6);
+    part(BABYLON.MeshBuilder.CreateCylinder("legBR", leg, scene), fur,  0.3, 0.3, -0.6);
+
+    // Tail, tilted up and back
+    const tail = part(BABYLON.MeshBuilder.CreateCylinder("tail", { diameter: 0.15, height: 1.2 }, scene), fur, 0, 1.5, -1.25);
+    tail.rotation.x = -0.6;
+
+    // --- Walk in a circle, facing forward ---
+    let angle = 0;
+    const radius = 3;
+    cat.scaling.y = .1;
+    scene.onBeforeRenderObservable.add(() => {
+        angle += 0.02;
+        cat.position.x = Math.cos(angle) * radius;
+        cat.position.z = Math.sin(angle) * radius;
+        cat.rotation.y = angle*10;              // face the direction of travel
+        tail.rotation.z = Math.sin(angle * 10) * 0.3;   // tail swish
+    });
+
+    var ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 8, height: 8 }, scene);
+    await scene.createDefaultXRExperienceAsync({
+        uiOptions: {
+            sessionMode: "immersive-ar",
+            referenceSpaceType: "local-floor"
+        },
+        disableTeleportation: true
+    });
+    return scene;
+};
